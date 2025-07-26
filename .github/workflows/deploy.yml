@@ -2,7 +2,7 @@ name: Deploy Terraform to AWS
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   terraform:
@@ -15,6 +15,13 @@ jobs:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
 
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-south-1  # ← change this to your region if different
+
     - name: Terraform Init
       run: terraform init
 
@@ -23,6 +30,3 @@ jobs:
 
     - name: Terraform Apply
       run: terraform apply -auto-approve
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
