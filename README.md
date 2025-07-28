@@ -22,3 +22,5 @@ This project implements a serverless, event-driven data pipeline using AWS servi
 - `main.tf` – Provisions S3 buckets, Lambda, IAM roles, and event triggers
 - `lambda/lambda_function.py` – Python code for the Lambda function
 - `function.zip` – Packaged Lambda function code (auto-generated)
+
+# Trigger Test
