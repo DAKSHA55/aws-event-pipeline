@@ -17,7 +17,7 @@ data "archive_file" "lambda_zip" {
 }
 
 resource "aws_iam_role" "lambda_exec_role" {
-  name = "lambda_exec_role"
+  name = "lambda_exec_role_v2"  # or any unique name
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [{
@@ -33,6 +33,29 @@ resource "aws_iam_role" "lambda_exec_role" {
 resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
   role       = aws_iam_role.lambda_exec_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+#  NEW POLICY for S3 read/write access
+resource "aws_iam_role_policy" "lambda_s3_policy" {
+  name = "lambda-s3-access"
+  role = aws_iam_role.lambda_exec_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject"
+        ],
+        Resource = [
+          "arn:aws:s3:::csv-input-bucket-kshitij/*",
+          "arn:aws:s3:::csv-output-bucket-kshitij/*"
+        ]
+      }
+    ]
+  })
 }
 
 resource "aws_lambda_function" "csv_processor" {
@@ -64,6 +87,3 @@ resource "aws_lambda_permission" "allow_s3" {
   principal     = "s3.amazonaws.com"
   source_arn    = aws_s3_bucket.input_bucket.arn
 }
-
-# Triggering pipeline test
-
