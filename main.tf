@@ -65,4 +65,5 @@ resource "aws_lambda_permission" "allow_s3" {
   source_arn    = aws_s3_bucket.input_bucket.arn
 }
 
-# Test trigger
+# Triggering pipeline test
+
